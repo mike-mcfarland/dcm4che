@@ -132,6 +132,10 @@ public class DicomInputStream extends FilterInputStream
     private FileOutputStream blkOut;
     private long blkOutPos;
 
+    public DicomInputStream(InputStream in, String tsuid, int size) throws IOException {
+    	this(new BufferedInputStream(in, size), tsuid);
+    }
+    
     public DicomInputStream(InputStream in, String tsuid) throws IOException {
         super(in);
         switchTransferSyntax(tsuid);

@@ -42,6 +42,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferShort;
 import java.awt.image.DataBufferUShort;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.FilterOutputStream;
@@ -288,7 +289,7 @@ public class Compressor extends Decompressor implements Closeable {
                 if (imageParams.getBitsStored() < imageParams.getBitsAllocated())
                     BufferedImageUtils.nullifyUnusedBits(imageParams.getBitsStored(),
                             bi.getRaster().getDataBuffer());
-                cache = new MemoryCacheImageOutputStream(cacheout) {
+                cache = new MemoryCacheImageOutputStream(new BufferedOutputStream(cacheout,524288)) {
 
                     @Override
                     public void flush() throws IOException {
@@ -308,7 +309,7 @@ public class Compressor extends Decompressor implements Closeable {
                             frameIndex + 1,
                             (float) BufferedImageUtils.sizeOf(bi) / streamLength,
                             end - start);
-                Compressor.this.verify(cache, frameIndex);
+                //Compressor.this.verify(cache, frameIndex);
             } catch (IOException ex) {
                 cache = null;
                 Compressor.this.ex = ex;
