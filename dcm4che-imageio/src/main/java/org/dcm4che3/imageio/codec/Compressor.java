@@ -332,22 +332,30 @@ public class Compressor extends Decompressor implements Closeable {
 
     public BufferedImage readFrame(int frameIndex) throws IOException {
         if (iis == null)
-            iis = new FileImageInputStream(file);
+            iis = createImageInputStream();
 
         if (decompressor != null)
             return decompressFrame(iis, frameIndex);
 
-        iis.setByteOrder(pixeldata.bigEndian
-                ? ByteOrder.BIG_ENDIAN
-                : ByteOrder.LITTLE_ENDIAN);
-        iis.seek(pixeldata.offset() + imageParams.getFrameLength() * frameIndex);
+        if (pixeldata!=null) {
+            iis.setByteOrder(pixeldata.bigEndian
+                    ? ByteOrder.BIG_ENDIAN
+                    : ByteOrder.LITTLE_ENDIAN);
+            iis.seek(pixeldata.offset() + imageParams.getFrameLength() * frameIndex);
+        }
+        else {
+            iis.setByteOrder(ByteOrder.LITTLE_ENDIAN);
+            iis.seek(imageParams.getFrameLength() * frameIndex);
+        }
+
         DataBuffer db = bi.getRaster().getDataBuffer();
         switch (db.getDataType()) {
         case DataBuffer.TYPE_BYTE:
             byte[][] data = ((DataBufferByte) db).getBankData();
             for (byte[] bs : data)
                 iis.readFully(bs);
-            if (pixeldata.bigEndian && pixeldataVR.vr == VR.OW)
+            if (pixeldata!=null && pixeldata.bigEndian && pixeldataVR.vr == VR
+                    .OW)
                 ByteUtils.swapShorts(data);
             break;
         case DataBuffer.TYPE_USHORT:

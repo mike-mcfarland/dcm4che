@@ -38,15 +38,13 @@
 package org.dcm4che3.imageio.codec;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.Attributes;
@@ -75,6 +73,7 @@ public class Decompressor {
     protected final TransferSyntaxType tsType;
     protected Fragments pixeldataFragments;
     protected File file;
+    protected byte[] bytes;
     protected ImageParams imageParams;
     protected BufferedImage bi;
     protected ImageReader decompressor;
@@ -122,8 +121,10 @@ public class Decompressor {
             LOG.debug("Decompressor: {}", decompressor.getClass().getName());
             this.readParam = decompressor.getDefaultReadParam();
             this.patchJPEGLS = param.patchJPEGLS;
-        } else {
+        } else if (pixeldata instanceof BulkData){
             this.file = ((BulkData) pixeldata).getFile();
+        } else {
+            this.bytes = ((byte[]) pixeldata);
         }
     }
 
@@ -192,9 +193,15 @@ public class Decompressor {
         }
     }
 
-    public FileImageInputStream createImageInputStream()
+    public ImageInputStream createImageInputStream()
             throws IOException {
-        return new FileImageInputStream(file);
+        if (file!=null)
+            return new FileImageInputStream(file);
+        else if (bytes !=null)
+            return new MemoryCacheImageInputStream(new ByteArrayInputStream
+                    (bytes));
+        else
+            return null;
     }
 
     public void writeFrameTo(ImageInputStream iis, int frameIndex,
