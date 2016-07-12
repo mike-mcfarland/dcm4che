@@ -214,8 +214,8 @@ public class ReflectiveAdapter<T> implements ConfigTypeAdapter<T, Map<String, Ob
         Path parentPath = pathByUUID.subPath(0, pathByUUID.getPathItems().size() - nodesAbove);
 
         // load parent
-        typeSafeConfig.load(parentPath, parentProp.getRawClass(), ctx);
-
+        Object loadedParent = typeSafeConfig.load(parentPath, parentProp.getRawClass(), ctx);
+        ConfigReflection.setProperty(confObj, parentField.getName(), loadedParent);
     }
 
 
