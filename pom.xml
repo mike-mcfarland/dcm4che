@@ -159,19 +159,31 @@
   </modules>
   <distributionManagement>
     <repository>
-      <id>www.dcm4che.org</id>
-      <name>dcm4che Repository</name>
-      <url>scp://www.dcm4che.org:443/home/maven2</url>
+      <id>maven.karoshealth.com</id>
+      <name>Karos Health Private Repository</name>
+      <url>https://maven.karoshealth.com:9001/nexus/content/repositories/releases</url>
+      <uniqueVersion>true</uniqueVersion>
     </repository>
+    <snapshotRepository>
+      <id>maven.karoshealth.com</id>
+      <name>Karos Health Private Repository</name>
+      <url>https://maven.karoshealth.com:9001/nexus/content/repositories/snapshots</url>
+      <uniqueVersion>true</uniqueVersion>
+    </snapshotRepository>
   </distributionManagement>
   <repositories>
+    <repository>
+      <id>maven.karoshealth.com</id>
+      <name>Karos Health Private Repository</name>
+      <url>https://maven.karoshealth.com:9001/nexus/content/groups/public/</url>
+    </repository>
     <repository>
       <id>www.dcm4che.org</id>
       <name>dcm4che Repository</name>
       <url>http://www.dcm4che.org/maven2</url>
     </repository>
     <repository>
-      <id>jboss</id>
+      <id>JBoss</id>
       <url>http://repository.jboss.org/nexus/content/groups/public</url>
     </repository>
   </repositories>
